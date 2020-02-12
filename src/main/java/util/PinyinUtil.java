@@ -26,6 +26,13 @@ public class PinyinUtil {
         //设置带v字符 如lv绿
         FORMAT.setVCharType(HanyuPinyinVCharType.WITH_V);
     }
+
+    public static boolean containsChinese(String name){
+        //
+        // name.matches()
+           return false;
+    }
+
     /*
     * 通过一个文件名获取全拼+拼音首字母
     * 中华人民共和--->zhonghuarenminggongheguo/zhrmghg
@@ -151,6 +158,10 @@ public class PinyinUtil {
         System.out.println(Arrays.toString(compose(get("中华人民共和国",true))));
         System.out.println(Arrays.toString(compose(get("和长和",true))));
         System.out.println(Arrays.toString(compose(get("和长和",false))));
+
+
+        System.out.println("abc".matches(".*"));
+        System.out.println("abc".matches("a[bc]c"));
 
     }
 }
