@@ -30,7 +30,7 @@ public class PinyinUtil {
     public static boolean containsChinese(String name){
         //
         // name.matches()
-           return false;
+           return name.matches(".*"+CHINESE_PATTERN+".*");//检验某一个字符串是否包含中文
     }
 
     /*
