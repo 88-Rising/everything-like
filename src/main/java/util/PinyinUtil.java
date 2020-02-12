@@ -148,6 +148,7 @@ public class PinyinUtil {
 
         System.out.println(Arrays.toString(compose(get("中华人民共和国",true))));
         System.out.println(Arrays.toString(compose(get("和长和",true))));
+        System.out.println(Arrays.toString(compose(get("和长和",false))));
 
     }
 }
