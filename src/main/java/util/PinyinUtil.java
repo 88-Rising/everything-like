@@ -57,6 +57,41 @@ public class PinyinUtil {
 
 
     }
+    /*
+    和[he,hu,huo,...]长[zhang,chang]
+    hezhanghe/hezhanghu/hezhanghuo/......
+    * name
+    * fullSpell ture表示全拼 false表示拼音首字母
+    * return 包含多音字的字符串二维组合：[zhang,chang] [he,hu,huo,..]
+    *
+    * */
+    public static String[][] get(String name,boolean fullSpell ){
+     char[] chars=name.toCharArray();
+        String[][] result=new String[chars.length][];
+        for(int i=0;i<chars.length;i++){
+            try {
+                String[] pinyins=PinyinHelper
+                        .toHanyuPinyinStringArray(chars[i],FORMAT);
+                if(pinyins==null||pinyins.length==0){
+                    result[i]=new String[]{String.valueOf(chars[i])};
+                }else if(fullSpell){//全拼
+                    result[i]=pinyins;
+                }else{//拼音首字母
+                    String[] array=new String[pinyins.length];
+                    for(int j=0;j<pinyins.length;j++){
+                        array[i]=String.valueOf(pinyins[j].charAt(0));
+                    }
+                    result[i]=array;
+                }
+
+            } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
+                result[i]=new String[]{String.valueOf(chars[i])};
+            }
+
+        }
+        return result;
+
+    }
 
     public static void main(String[] args) {
         System.out.println(Arrays.toString(get("中华人民共和国")));
