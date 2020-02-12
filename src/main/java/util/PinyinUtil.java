@@ -9,6 +9,8 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 
 import java.text.Format;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PinyinUtil {
     private static final HanyuPinyinOutputFormat FORMAT
@@ -70,18 +72,13 @@ public class PinyinUtil {
         String[][] result=new String[chars.length][];
         for(int i=0;i<chars.length;i++){
             try {
+                //去除音调，“只”[zhi,zhi]
                 String[] pinyins=PinyinHelper
                         .toHanyuPinyinStringArray(chars[i],FORMAT);
                 if(pinyins==null||pinyins.length==0){
                     result[i]=new String[]{String.valueOf(chars[i])};
-                }else if(fullSpell){//全拼
-                    result[i]=pinyins;
                 }else{//拼音首字母
-                    String[] array=new String[pinyins.length];
-                    for(int j=0;j<pinyins.length;j++){
-                        array[i]=String.valueOf(pinyins[j].charAt(0));
-                    }
-                    result[i]=array;
+                    result[i]=unique(pinyins,fullSpell);
                 }
 
             } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
@@ -90,6 +87,58 @@ public class PinyinUtil {
 
         }
         return result;
+
+    }
+    /*
+    * 字符串数组去重操作
+    *
+    * */
+    public static String[] unique(String[] array,boolean fullSpell){
+        Set<String> set=new HashSet<>();
+        for(String s:array){
+            if(fullSpell){
+                set.add(s);
+            }else{
+                set.add(String.valueOf(s.charAt(0)));
+            }
+        }
+        return  set.toArray(new String[set.size()]);
+
+    }
+
+    /*
+    * 和[he,hu,huo,...]长[zhang,chang]
+    * hezhang,hechang,huzhang.....//组合
+    * 每个中文字符返回是拼音是字符串数组，每两个中文字符数组合并为以一个字符串数组之后以此类推
+    *
+    * pinyinArray传入的二维数组 两两组合
+    * */
+
+    public static String[] compose(String[][] pinyinArray){
+        if(pinyinArray==null||pinyinArray.length==0){
+              return null;
+        }else if(pinyinArray.length==1){
+            return pinyinArray[0];
+        } else{
+          for(int i=1;i<pinyinArray.length;i++){
+             pinyinArray[0]=compose(pinyinArray[0],pinyinArray[i]);
+
+          }
+            return pinyinArray[0];
+        }
+
+    }
+
+    public static String[] compose(String[] pinyins1,String[] pinyins2){
+        String[] result=new String[pinyins1.length*pinyins2.length];
+        for(int i=0;i<pinyins1.length;i++){
+            for(int j=0;j<pinyins2.length;j++){
+              result[i*pinyins2.length+j]=pinyins1[i]+pinyins2[j];
+
+            }
+
+        }
+    return result;
 
     }
 
