@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PinyinUtil {
+    /*** 中文字符格式 */
+    private static final String CHINESE_PATTERN = "[\\u4E00-\\u9FA5]";
     private static final HanyuPinyinOutputFormat FORMAT
             =new HanyuPinyinOutputFormat();
 
