@@ -8,6 +8,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import java.text.Format;
+import java.util.Arrays;
 
 public class PinyinUtil {
     private static final HanyuPinyinOutputFormat FORMAT
@@ -54,6 +55,12 @@ public class PinyinUtil {
         result[1]=pinyinFirst.toString();
         return result;
 
+
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Arrays.toString(get("中华人民共和国")));
+        System.out.println(Arrays.toString(get("中华1人民b共和A国")));
 
     }
 }
