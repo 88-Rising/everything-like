@@ -1,5 +1,6 @@
 package util;
 
+import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
 import task.DBInit;
 
@@ -29,6 +30,9 @@ public class DBUtil {
                 //如果不在此判断可能所有进入的线程都进来创建这个对象
                 //提高效率保证安全 要保证建立的是同一个对象
                 if(DATA_SOURCE==null){
+
+                    SQLiteConfig config=new SQLiteConfig();
+                    config.setDateStringFormat(Util.DATA_PATTERN);
                     //初始化操作
                     DATA_SOURCE=new SQLiteDataSource();//使用synchronized 保证指令不会重排序在创建对象的时候禁止指令重排序
                     ((SQLiteDataSource)DATA_SOURCE).setUrl(getUrl());
