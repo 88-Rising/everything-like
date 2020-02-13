@@ -8,7 +8,9 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /*
  * 提供数据库功能
@@ -72,4 +74,23 @@ public class DBUtil {
         System.out.println(getConnection());
     }
 
+    public static void close(Connection connection,Statement statement){
+        close(connection, statement,null);
+    }
+    public static void close(Connection connection, Statement statement, ResultSet resultSet) {
+        try {
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(resultSet!=null){
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new  RuntimeException("释放数据库资源错误",e);
+        }
+    }
 }
