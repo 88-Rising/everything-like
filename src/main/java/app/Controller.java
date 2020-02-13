@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
+import task.DBInit;
 
 import java.io.File;
 import java.net.URL;
@@ -32,6 +33,9 @@ public class Controller implements Initializable {
     private Label srcDirectory;
 
     public void initialize(URL location, ResourceBundle resources) {
+        //界面初始化时 需要初始化数据库及表
+        DBInit.init();
+
         // 添加搜索框监听器，内容改变时执行监听事件
         searchField.textProperty().addListener(new ChangeListener<String>() {
 
