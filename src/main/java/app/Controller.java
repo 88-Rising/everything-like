@@ -13,13 +13,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import task.DBInit;
+import task.FileScanner;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-
+     Thread task;
     @FXML
     private GridPane rootPane;
 
@@ -57,7 +58,20 @@ public class Controller implements Initializable {
         // TODO
         srcDirectory.setText(path);
         //选择了目录，就需要执行目录的扫描任务，把该目录下的子文件和子文件夹都扫描出来
+        task=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("执行文件扫描任务");
+                new FileScanner().scan(path);//多线程执行扫描任务
+                //等待文件扫描任务执行完毕
+                //TODO
+                //刷新表格，将扫描出来的子文件和子文件夹都展示在表格里边
+                freshTable();
 
+
+            }
+        });
+        task.start();
     }
 
     // 刷新表格数据
