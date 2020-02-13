@@ -55,6 +55,9 @@ public class Controller implements Initializable {
         // 获取选择的目录路径，并显示
         String path = file.getPath();
         // TODO
+        srcDirectory.setText(path);
+        //选择了目录，就需要执行目录的扫描任务，把该目录下的子文件和子文件夹都扫描出来
+
     }
 
     // 刷新表格数据

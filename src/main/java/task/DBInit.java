@@ -59,6 +59,7 @@ public class DBInit {
             statement =connection.createStatement();
             String[] sqls=readSQL();
             for(String sql:sqls){
+                System.out.println("执行sql:"+sql);
                 //3.执行sql语句
                 statement.executeUpdate(sql);
 
@@ -78,13 +79,13 @@ public class DBInit {
 
 
     public static void main(String[] args) {
-        String[] sqls=readSQL();
-        for(String sql:sqls){
-            System.out.println(sql);
-        }
-        System.out.println("--------");
-        System.out.println(Arrays.toString(readSQL()));
+//        String[] sqls=readSQL();
+//        for(String sql:sqls){
+//            System.out.println(sql);
+//        }
+//        System.out.println("--------");
+//        System.out.println(Arrays.toString(readSQL()));
 
-        //        init();
+               init();
     }
 }
