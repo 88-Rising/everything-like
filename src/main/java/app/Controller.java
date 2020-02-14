@@ -1,5 +1,6 @@
 package app;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -62,13 +63,19 @@ public class Controller implements Initializable {
         task=new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("执行文件扫描任务");
-                FileScanner scanner=new FileScanner();
-                scanner.scan(path);//多线程执行扫描任务
-                //等待文件扫描任务执行完毕，waitFinish()需要阻塞等待
-                scanner.waitFinish();
-                //刷新表格，将扫描出来的子文件和子文件夹都展示在表格里边
-                freshTable();
+                try {
+                    System.out.println("执行文件扫描任务");
+                    FileScanner scanner=new FileScanner();
+                    scanner.scan(path);//多线程执行扫描任务
+                    //等待文件扫描任务执行完毕，waitFinish()需要阻塞等待
+                    scanner.waitFinish();
+                    System.out.println("文件扫描完成，刷新表格");
+                    //刷新表格，将扫描出来的子文件和子文件夹都展示在表格里边
+                    freshTable();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
 
             }

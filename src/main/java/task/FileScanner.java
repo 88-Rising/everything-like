@@ -2,6 +2,7 @@ package task;
 
 import java.io.File;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FileScanner {
 /*
@@ -19,9 +20,16 @@ public class FileScanner {
     //快捷创建线程池的方式
 //    private ExecutorService exe=Executors.newFixedThreadPool(4);
 
+    //计数器 不传入数值 表示初始值为0
+    private volatile AtomicInteger count=new AtomicInteger();
+
+    //线程等待的锁对象
+    private Object lock=new Object();
+
     //扫描文件目录
     public void scan(String path){
     //递归扫描 多级任务进行扫描
+        count.incrementAndGet();//计数器++i 启动根目录扫描任务
      doScan(new File(path));
 
     }
@@ -35,12 +43,20 @@ public class FileScanner {
                     for(File child:children){
                        if(child.isDirectory()){//如果是文件夹递归处理
                            System.out.println("文件夹"+child.getParent());
+                           count.incrementAndGet();//计数器++i 启动子文件夹扫描任务
                            doScan(child);
                        }else{//如果是文件，待做的工作
                            //TODO
                            System.out.println("文件"+child.getParent());
                        }
                     }
+                }
+                int r=count.decrementAndGet();//减操作
+                if(r==0){
+                    synchronized (lock){
+                        lock.notify();
+                    }
+
                 }
             }
         });
@@ -53,8 +69,10 @@ public class FileScanner {
     * 2.wait();线程间的等待
     *
     * */
-    public void waitFinish(){
-
+    public void waitFinish() throws InterruptedException{
+        synchronized (lock){
+            lock.wait();
+        }
 
     }
     public static void main(String[] args) throws InterruptedException {
