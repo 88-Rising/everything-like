@@ -43,6 +43,7 @@ public class FileScanner {
     }
 
     private void doScan(File dir){
+        callback.callback(dir);
         pool.execute(new Runnable() {
             @Override
             public void run() {
@@ -51,13 +52,14 @@ public class FileScanner {
                     if (children != null) {
                         for (File child : children) {
                             if (child.isDirectory()) {//如果是文件夹递归处理
-                                System.out.println("文件夹" + child.getParent());
+//                                System.out.println("文件夹" + child.getParent());
                                 count.incrementAndGet();//计数器++i 启动子文件夹扫描任务
                                 doScan(child);
-                            } else {//如果是文件，待做的工作
-                                //TODO
-                                System.out.println("文件" + child.getParent());
-                            }
+                           }
+                            // else {//如果是文件，待做的工作
+                            //  //TODO
+                            ////   System.out.println("文件" + child.getParent());
+                //           }
                         }
                     }
                 }finally {//保证线程计数不管是否出现异常 都能进行-1操作
