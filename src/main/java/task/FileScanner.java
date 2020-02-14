@@ -49,7 +49,7 @@ public class FileScanner {
     //等待scan方法结束
     /*
     * 多线程任务等待：Thread.start();
-    * 1.join()
+    * 1.join():需要使用线程Thread类的引用对象
     * 2.wait();线程间的等待
     *
     * */
@@ -57,7 +57,24 @@ public class FileScanner {
 
 
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        Thread t=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(Thread.currentThread().getName());//后执行
+            }
+        });
+        t.start();
+        System.out.println(Thread.currentThread().getName());//先执行
 
+        Thread t2=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(Thread.currentThread().getName());//先执行
+            }
+        });
+        t2.start();
+        t2.join();
+        System.out.println(Thread.currentThread().getName());//后执行
     }
 }
