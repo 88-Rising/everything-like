@@ -24,7 +24,9 @@ public class FileScanner {
     private volatile AtomicInteger count=new AtomicInteger();
 
     //线程等待的锁对象
-    private Object lock=new Object();
+    private Object lock=new Object();//1,使用加锁进行等待
+    private CountDownLatch latch=new CountDownLatch(1);//2.使用await()阻塞等待
+    private Semaphore semaphore=new Semaphore(0);//3.acquire()阻塞等待
 
     //扫描文件目录
     public void scan(String path){
@@ -55,9 +57,14 @@ public class FileScanner {
                 }finally {//保证线程计数不管是否出现异常 都能进行-1操作
                     int r=count.decrementAndGet();//减操作
                     if(r==0){
-                        synchronized (lock){
-                            lock.notify();
-                        }
+                        //第一种实现方式
+//                        synchronized (lock){
+//                            lock.notify();
+//                        }
+                        //第二种实现
+//                        latch.countDown();
+                        //第三种实现
+                        semaphore.release();
                     }
                 }
 
@@ -65,6 +72,7 @@ public class FileScanner {
         });
 
     }
+
     //等待scan方法结束
     /*
     * 多线程任务等待：Thread.start();
@@ -73,10 +81,16 @@ public class FileScanner {
     *
     * */
   public void waitFinish() throws InterruptedException {
-      synchronized (lock){
-          lock.wait();
-      }
+      //第一种实现
+//   synchronized (lock){
+//       lock.wait();
+//   }
+      //第二种实现
+//      latch.await();
+      //第三种是实现
+    semaphore.acquire();
   }
+
     public static void main(String[] args) throws InterruptedException {
 //        Thread t=new Thread(new Runnable() {
 //            @Override
