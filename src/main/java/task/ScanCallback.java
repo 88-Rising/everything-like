@@ -4,6 +4,7 @@ import java.io.File;
 
 public interface ScanCallback {
 
-    //对于文件夹的扫描任务进行回调,处理文件夹
+    //对于文件夹的扫描任务进行回调,处理文件夹，把下一级的子文件夹和文件保存到数据库
     void callback(File dir);
+
 }
