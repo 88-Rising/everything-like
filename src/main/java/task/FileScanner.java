@@ -28,6 +28,12 @@ public class FileScanner {
     private CountDownLatch latch=new CountDownLatch(1);//2.使用await()阻塞等待
     private Semaphore semaphore=new Semaphore(0);//3.acquire()阻塞等待
 
+    private ScanCallback callback;
+
+    public FileScanner(ScanCallback callback) {
+        this.callback=callback;
+    }
+
     //扫描文件目录
     public void scan(String path){
     //递归扫描 多级任务进行扫描
