@@ -1,8 +1,7 @@
 package task;
 
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.util.concurrent.*;
 
 public class FileScanner {
 /*
@@ -17,8 +16,48 @@ public class FileScanner {
          ,new LinkedBlockingDeque<>(),new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
+    //快捷创建线程池的方式
+//    private ExecutorService exe=Executors.newFixedThreadPool(4);
 
+    //扫描文件目录
     public void scan(String path){
+    //递归扫描 多级任务进行扫描
+     doScan(new File(path));
+
+    }
+
+    private void doScan(File dir){
+        pool.execute(new Runnable() {
+            @Override
+            public void run() {
+                File[] children=dir.listFiles();//下一级文件和文件夹
+                if(children!=null){
+                    for(File child:children){
+                       if(child.isDirectory()){//如果是文件夹递归处理
+                           System.out.println("文件夹"+child.getParent());
+                           doScan(child);
+                       }else{//如果是文件，待做的工作
+                           //TODO
+                           System.out.println("文件"+child.getParent());
+                       }
+                    }
+                }
+            }
+        });
+
+    }
+    //等待scan方法结束
+    /*
+    * 多线程任务等待：Thread.start();
+    * 1.join()
+    * 2.wait();线程间的等待
+    *
+    * */
+    public void waitFinish(){
+
+
+    }
+    public static void main(String[] args) {
 
     }
 }
