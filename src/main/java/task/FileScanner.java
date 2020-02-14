@@ -38,26 +38,29 @@ public class FileScanner {
         pool.execute(new Runnable() {
             @Override
             public void run() {
-                File[] children=dir.listFiles();//下一级文件和文件夹
-                if(children!=null){
-                    for(File child:children){
-                       if(child.isDirectory()){//如果是文件夹递归处理
-                           System.out.println("文件夹"+child.getParent());
-                           count.incrementAndGet();//计数器++i 启动子文件夹扫描任务
-                           doScan(child);
-                       }else{//如果是文件，待做的工作
-                           //TODO
-                           System.out.println("文件"+child.getParent());
-                       }
+                try {
+                    File[] children = dir.listFiles();//下一级文件和文件夹
+                    if (children != null) {
+                        for (File child : children) {
+                            if (child.isDirectory()) {//如果是文件夹递归处理
+                                System.out.println("文件夹" + child.getParent());
+                                count.incrementAndGet();//计数器++i 启动子文件夹扫描任务
+                                doScan(child);
+                            } else {//如果是文件，待做的工作
+                                //TODO
+                                System.out.println("文件" + child.getParent());
+                            }
+                        }
+                    }
+                }finally {//保证线程计数不管是否出现异常 都能进行-1操作
+                    int r=count.decrementAndGet();//减操作
+                    if(r==0){
+                        synchronized (lock){
+                            lock.notify();
+                        }
                     }
                 }
-                int r=count.decrementAndGet();//减操作
-                if(r==0){
-                    synchronized (lock){
-                        lock.notify();
-                    }
 
-                }
             }
         });
 
