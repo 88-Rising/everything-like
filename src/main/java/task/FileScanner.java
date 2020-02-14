@@ -69,12 +69,11 @@ public class FileScanner {
     * 2.wait();线程间的等待
     *
     * */
-    public void waitFinish() throws InterruptedException{
-        synchronized (lock){
-            lock.wait();
-        }
-
-    }
+  public void waitFinish() throws InterruptedException {
+      synchronized (lock){
+          lock.wait();
+      }
+  }
     public static void main(String[] args) throws InterruptedException {
 //        Thread t=new Thread(new Runnable() {
 //            @Override
