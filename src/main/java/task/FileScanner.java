@@ -58,23 +58,31 @@ public class FileScanner {
 
     }
     public static void main(String[] args) throws InterruptedException {
-        Thread t=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println(Thread.currentThread().getName());//后执行
-            }
-        });
-        t.start();
-        System.out.println(Thread.currentThread().getName());//先执行
-
+//        Thread t=new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.println(Thread.currentThread().getName());//后执行
+//            }
+//        });
+//        t.start();
+//        System.out.println(Thread.currentThread().getName());//先执行
+        Object obj=new Object();
         Thread t2=new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println(Thread.currentThread().getName());//先执行
+                synchronized (obj){
+                    obj.notify();
+                }
             }
         });
         t2.start();
-        t2.join();
+        //把join方法改造成线程等待，改为wait()方法实现
+//        t2.join();
+        synchronized (obj){
+            obj.wait();
+        }
+
         System.out.println(Thread.currentThread().getName());//后执行
     }
 }
