@@ -6,7 +6,8 @@ public class WaitTest {
     /*
     * 等待所有线程执行完毕
     * 1.CountDownLatch:初始化一个数值，可以使用countDown对数值进行i--的操作 也可以await()操作 这时候会阻塞 并且一直等待 直到i=0
-    * 2.Semaphone
+    * 2.Semaphone：release()进行一定数量的许可颁发，acquire()阻塞并等待许可数量满足
+    * 相对来说 semaphone功能更强大更灵活
     * */
     private static int COUNT=5;
     private static CountDownLatch LATCH=new CountDownLatch(5);
