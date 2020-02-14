@@ -18,6 +18,7 @@ import task.FileScanner;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 public class Controller implements Initializable {
      Thread task;
@@ -62,9 +63,10 @@ public class Controller implements Initializable {
             @Override
             public void run() {
                 System.out.println("执行文件扫描任务");
-                new FileScanner().scan(path);//多线程执行扫描任务
+                FileScanner scanner=new FileScanner();
+                scanner.scan(path);//多线程执行扫描任务
                 //等待文件扫描任务执行完毕
-                //TODO
+                scanner.waitFinish();
                 //刷新表格，将扫描出来的子文件和子文件夹都展示在表格里边
                 freshTable();
 
