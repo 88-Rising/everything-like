@@ -13,9 +13,10 @@ public class FileScanner {
 * 5.工作的阻塞队列
 * 6.如果超出工作队列的长度，任务要进行处理的方式
 * */
-    private ThreadPoolExecutor pool= new ThreadPoolExecutor(3,3,0,TimeUnit.MICROSECONDS
-         ,new LinkedBlockingDeque<>(),new ThreadPoolExecutor.CallerRunsPolicy()
-    );
+//    private ThreadPoolExecutor pool= new ThreadPoolExecutor(3,3,0,TimeUnit.MICROSECONDS
+//         ,new LinkedBlockingQueue<>(),new ThreadPoolExecutor.AbortPolicy()
+//    );
+    private ExecutorService pool=Executors.newFixedThreadPool(4);
 
     //快捷创建线程池的方式
 //    private ExecutorService exe=Executors.newFixedThreadPool(4);
@@ -43,18 +44,23 @@ public class FileScanner {
     }
 
     private void doScan(File dir){
-        callback.callback(dir);
         pool.execute(new Runnable() {
             @Override
             public void run() {
                 try {
+                    callback.callback(dir);
                     File[] children = dir.listFiles();//下一级文件和文件夹
                     if (children != null) {
                         for (File child : children) {
                             if (child.isDirectory()) {//如果是文件夹递归处理
 //                                System.out.println("文件夹" + child.getParent());
                                 count.incrementAndGet();//计数器++i 启动子文件夹扫描任务
-                                doScan(child);
+                                pool.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        doScan(child);
+                                    }
+                                });
                            }
                             // else {//如果是文件，待做的工作
                             //  //TODO
@@ -70,9 +76,9 @@ public class FileScanner {
 //                            lock.notify();
 //                        }
                         //第二种实现
-//                        latch.countDown();
+                        latch.countDown();
                         //第三种实现
-                        semaphore.release();
+//                        semaphore.release();
                     }
                 }
 
@@ -94,9 +100,9 @@ public class FileScanner {
 //       lock.wait();
 //   }
       //第二种实现
-//      latch.await();
+      latch.await();
       //第三种是实现
-        semaphore.acquire();
+//        semaphore.acquire();
         //阻塞等待直到任务完成 完成之后需要关闭线程池
         shutdown();
     }

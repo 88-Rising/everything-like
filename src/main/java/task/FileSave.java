@@ -14,6 +14,9 @@ public class FileSave implements ScanCallback{
     @Override
     public void callback(File dir) {
         //文件夹下一级子文件和子文件夹保存到数据库
+        //获取本地目录下一级子文件和子文件夹
+        //集合框架中使用自定义类型，判断是否某个对象再集合存在：比对两个集合中的元素
+        //list,set
         File[] children = dir.listFiles();
         if(children!=null){
             for(File child:children){
@@ -21,6 +24,18 @@ public class FileSave implements ScanCallback{
                 save(child);
             }
         }
+        //获取数据库保存的dir目录的下一级子文件和子文件夹(jdbc select)
+        //TODO List<File>
+
+
+        //数据库有，本地没有，做删除操作(delete)
+        //TODO
+
+
+        //本地有，数据库没有，做插入操作(insert)
+        //TODO
+
+
     }
     /*
     * 文件信息保存到数据库
