@@ -65,29 +65,7 @@ public class Controller implements Initializable {
         if(task!=null){
             task.interrupt();
         }
-        task=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //文件扫描回调接口，做下一级文件夹和文件的保存数据库工作
-                ScanCallback callback=new FileSave();
-                FileScanner scanner=new FileScanner(callback);//传入扫描任务
-                try {
-                    System.out.println("执行文件扫描任务");
-                    scanner.scan(path);//为了提高效率，多线程执行扫描任务
-                    //等待文件扫描任务执行完毕，waitFinish()需要阻塞等待
-                    scanner.waitFinish();
-                    System.out.println("文件扫描完成，刷新表格");
-                    //刷新表格，将扫描出来的子文件和子文件夹都展示在表格里边
-                    freshTable();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    scanner.shutdown();
-                }
-
-
-            }
-        });
+        task=new ScanThread(path);
         task.start();
     }
 
@@ -96,5 +74,33 @@ public class Controller implements Initializable {
         ObservableList<FileMeta> metas = fileTable.getItems();
         metas.clear();
         // TODO
+    }
+
+    private  class ScanThread extends Thread{
+        private FileScanner scanner;
+        private String path;
+        public ScanThread(String path){
+            //文件扫描回调接口，做下一级文件夹和文件的保存数据库工作
+            ScanCallback callback=new FileSave();
+            scanner=new FileScanner(callback);//传入扫描任务
+            this.path=path;
+        }
+
+        @Override
+        public void run() {
+            try {
+                System.out.println("执行文件扫描任务");
+                scanner.scan(path);//为了提高效率，多线程执行扫描任务
+                //等待文件扫描任务执行完毕，waitFinish()需要阻塞等待
+                scanner.waitFinish();
+                System.out.println("文件扫描完成，刷新表格");
+                //刷新表格，将扫描出来的子文件和子文件夹都展示在表格里边
+                freshTable();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                scanner.shutdown();
+            }
+
+        }
     }
 }

@@ -17,7 +17,7 @@ public class FileSave implements ScanCallback{
         File[] children = dir.listFiles();
         if(children!=null){
             for(File child:children){
-//
+                System.out.println(child.getPath());
                 save(child);
             }
         }
