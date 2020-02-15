@@ -88,7 +88,7 @@ public class FileScanner {
     * 2.wait();线程间的等待
     *
     * */
-  public void waitFinish() throws InterruptedException {
+    public void waitFinish() throws InterruptedException {
       //第一种实现
 //   synchronized (lock){
 //       lock.wait();
@@ -96,8 +96,19 @@ public class FileScanner {
       //第二种实现
 //      latch.await();
       //第三种是实现
-    semaphore.acquire();
-  }
+        semaphore.acquire();
+        //阻塞等待直到任务完成 完成之后需要关闭线程池
+        shutdown();
+    }
+
+    /*
+    * 关闭线程池
+    * */
+    public void shutdown(){
+      pool.shutdown(); //内部实现原理：通过内部Thread.interrupt()来中断
+//      pool.shutdownNow(); 通过Thread.stop()来停止线程
+
+    }
 
     public static void main(String[] args) throws InterruptedException {
 //        Thread t=new Thread(new Runnable() {
