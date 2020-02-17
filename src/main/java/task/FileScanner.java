@@ -17,7 +17,6 @@ public class FileScanner {
 //         ,new LinkedBlockingQueue<>(),new ThreadPoolExecutor.AbortPolicy()
 //    );
     private ExecutorService pool=Executors.newFixedThreadPool(4);
-
     //快捷创建线程池的方式
 //    private ExecutorService exe=Executors.newFixedThreadPool(4);
 
