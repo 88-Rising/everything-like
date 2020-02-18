@@ -19,7 +19,6 @@ public class FileScanner {
     private ExecutorService pool=Executors.newFixedThreadPool(4);
     //快捷创建线程池的方式
 //    private ExecutorService exe=Executors.newFixedThreadPool(4);
-
     //计数器 不传入数值 表示初始值为0
     private volatile AtomicInteger count=new AtomicInteger();
 
