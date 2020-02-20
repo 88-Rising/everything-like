@@ -2,6 +2,7 @@ package app;
 
 import util.DBUtil;
 import util.PinyinUtil;
+import util.Util;
 
 import java.io.File;
 import java.util.Date;
@@ -12,6 +13,8 @@ public class FileMeta {
     private String path;//文件所在父目录的路径
     private Long size;//文件大小
     private Date lastModified;//文件上次修改时间
+    //是否是文件夹
+    private boolean isDirectory;
 
 
     //给客户端控件使用，和app.fxml中定义的名称一致
@@ -25,14 +28,15 @@ public class FileMeta {
 
     //通过文件设置属性
     public FileMeta(File file){
-         this(file.getName(), file.getParent(), file.length(), new Date(file.lastModified()));
+         this(file.getName(), file.getParent(),file.isDirectory(), file.length(), new Date(file.lastModified()));
 
     }
 
     //通过数据库获取的数据设置FileMeta
-    public FileMeta(String name, String path, Long size, Date lastModified){
+    public FileMeta(String name, String path,boolean isDirectory, Long size, Date lastModified){
         this.name=name;
         this.path=path;
+        this.isDirectory=isDirectory;
         this.size=size;
         this.lastModified=lastModified;
         if(PinyinUtil.containsChinese(name)){
@@ -41,8 +45,8 @@ public class FileMeta {
             pinyinFirst=pinyins[1];
         }
         //客户端表格空间文件大小，文件上次修改时间设置
-//        sizeText=?
-//          lastModified=?
+        sizeText= Util.parseSize(size);
+        lastModifiedText=Util.parseDate(lastModified);
     }
 
     public String getName() {
@@ -107,5 +111,13 @@ public class FileMeta {
 
     public void setPinyinFirst(String pinyinFirst) {
         this.pinyinFirst = pinyinFirst;
+    }
+
+    public boolean isDirectory() {
+        return isDirectory;
+    }
+
+    public void setDirectory(boolean directory) {
+        isDirectory = directory;
     }
 }
