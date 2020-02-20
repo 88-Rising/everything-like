@@ -52,20 +52,17 @@ public class FileScanner {
                         for (File child : children) {
                             if (child.isDirectory()) {//如果是文件夹递归处理
 //                                System.out.println("文件夹" + child.getParent());
-                                count.incrementAndGet();//计数器++i 启动子文件夹扫描任务
-                                pool.execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        doScan(child);
-                                    }
-                                });
-                           }
+                                count.incrementAndGet();//计数器++i 启动子文件夹扫描任
+                                System.out.println("当前任务数："+count.get());
+                                doScan(child);
+                            }
+                        }
                             // else {//如果是文件，待做的工作
                             //  //TODO
                             ////   System.out.println("文件" + child.getParent());
                 //           }
-                        }
                     }
+
                 }finally {//保证线程计数不管是否出现异常 都能进行-1操作
                     int r=count.decrementAndGet();//减操作
                     if(r==0){
@@ -74,9 +71,9 @@ public class FileScanner {
 //                            lock.notify();
 //                        }
                         //第二种实现
-                        latch.countDown();
+//                        latch.countDown();
                         //第三种实现
-//                        semaphore.release();
+                        semaphore.release();
                     }
                 }
 
@@ -98,19 +95,25 @@ public class FileScanner {
 //       lock.wait();
 //   }
       //第二种实现
-      latch.await();
+//      latch.await();
       //第三种是实现
-//        semaphore.acquire();
-        //阻塞等待直到任务完成 完成之后需要关闭线程池
-        shutdown();
+        try {
+            semaphore.acquire();
+        }finally {
+            //阻塞等待直到任务完成 完成之后需要关闭线程池
+            shutdown();
+        }
+
+
     }
 
     /*
     * 关闭线程池
     * */
     public void shutdown(){
-      pool.shutdown(); //内部实现原理：通过内部Thread.interrupt()来中断
-//      pool.shutdownNow(); 通过Thread.stop()来停止线程
+        System.out.println("关闭线程池....");
+//      pool.shutdown(); //内部实现原理：通过内部Thread.interrupt()来中断
+      pool.shutdownNow(); //通过Thread.stop()来停止线程
 
     }
 

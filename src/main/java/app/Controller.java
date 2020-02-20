@@ -82,7 +82,7 @@ public class Controller implements Initializable {
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    scanner.shutdown();
+//                    scanner.shutdown();
                 }
 
 
