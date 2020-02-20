@@ -10,11 +10,16 @@ public class FileScanner {
 * 2.最大线程数：有新任务，并且当前运行线程数小于最大线程数，会创建新的线程来处理任务
 * 3-4.超过3这个数量，4这个时间单位，2-1（最大线程数-核心线程数）这些线程数就会关闭
 * 相当于正式工加上临时工
-* 5.工作的阻塞队列
+* 5.工作的阻塞队列：能存放的最大任务数（交给线程处理的任务）
 * 6.如果超出工作队列的长度，任务要进行处理的方式
+*     1.CallerRunPolicy:谁指派的任务让谁自己去执行
+*     2.AbortPolicy：抛出异常
+*     3.Discardpolicy:对其最新的任务
+*     4.DiscardOldPolicy:对其最老的任务
 * */
 //    private ThreadPoolExecutor pool= new ThreadPoolExecutor(3,3,0,TimeUnit.MICROSECONDS
-//         ,new LinkedBlockingQueue<>(),new ThreadPoolExecutor.AbortPolicy()
+//         ,new LinkedBlockingQueue<>(),
+//          new ThreadPoolExecutor.AbortPolicy()
 //    );
     private ExecutorService pool=Executors.newFixedThreadPool(4);
     //快捷创建线程池的方式
@@ -113,8 +118,11 @@ public class FileScanner {
     public void shutdown(){
         System.out.println("关闭线程池....");
 //      pool.shutdown(); //内部实现原理：通过内部Thread.interrupt()来中断
-      pool.shutdownNow(); //通过Thread.stop()来停止线程
+        //shutdown():表达的含义是：新传入的任务不再接收了但是现在目前的任务（所有线程所执行的任务加上工作队的任务）还要执行完毕
 
+      pool.shutdownNow(); //通过Thread.stop()来停止线程
+        //新传入的任务shuntdownNow也不再接收了 目前任务（所有线程中执行的任务）判断是否能够停止，如果可以停止就结束任，如果不能就执行完再停止
+          //工作队列中的任务是直接丢弃的
     }
 
     public static void main(String[] args) throws InterruptedException {
