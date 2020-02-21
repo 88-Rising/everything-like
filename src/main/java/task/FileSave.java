@@ -5,6 +5,8 @@ import org.sqlite.core.DB;
 import util.DBUtil;
 import util.PinyinUtil;
 import util.Util;
+import java.util.Date;
+import java.lang.Long;
 
 import java.io.File;
 import java.sql.*;
@@ -29,16 +31,31 @@ public class FileSave implements ScanCallback{
         }
         //获取数据库保存的dir目录的下一级子文件和子文件夹(jdbc select)
         //TODO List<File>
-
+        List<FileMeta>  metas=query(dir);
 
 
         //数据库有，本地没有，做删除操作(delete)
-        //TODO
 
+        for(FileMeta meta : metas){
+            if(!locals.contains(meta)){
+                //meta删除
+                // 1.删除meta信息本身
+                // 2.如果是meta目录 还要删除其子文件夹
+                //TODO delate
+
+            }
+
+        }
 
         //本地有，数据库没有，做插入操作(insert)
-        //TODO
 
+        for(FileMeta meta : locals){
+            if(!metas.contains(meta)){
+                save(meta);
+
+            }
+
+        }
 
     }
     private List<FileMeta> query(File dir){
@@ -53,12 +70,12 @@ public class FileSave implements ScanCallback{
                   " from file_meta where path=?";
           //2.创建jdbc操作命令对象statement
           ps=connection.prepareStatement(sql);
+          String name = rs.getString("name");
           ps.setString(1,dir.getPath());
           //3.执行sql语句
           rs=ps.executeQuery();
           //4.处理结果集ResultSet
           while(rs.next()){
-              String name = rs.getString("name");
               String path = rs.getString("path");
               Boolean isDirectory=rs.getBoolean("is_directory");
               Long size=rs.getLong("size");
@@ -84,7 +101,7 @@ public class FileSave implements ScanCallback{
     * 文件信息保存到数据库
     *
     * */
-    private void save(File file){
+    private void save(FileMeta meta){
         Connection connection=null;
         PreparedStatement statement=null;
         try {
@@ -95,21 +112,21 @@ public class FileSave implements ScanCallback{
             " values (?, ?, ?, ?, ?, ?, ?)";
             //2.获取sql操作命令对象statement
             statement=connection.prepareStatement(sql);
-            statement.setString(1,file.getName());
-            statement.setString(2,file.getParent());
-            statement.setBoolean(3,file.isDirectory());
-            statement.setLong(4,file.length());
-            statement.setTimestamp(5,new Timestamp(file.lastModified()));
+            statement.setString(1,meta.getName());
+            statement.setString(2,meta.getPath());
+            statement.setBoolean(3,meta.getDirectory());
+            statement.setLong(4,meta.getSize());
+            statement.setString(5,meta.getLastModifiedText());
             String pinyin=null;
             String pinyin_first=null;
             //文件名包含中文要获取全拼和拼音首字母 保存到数据库
-            if(PinyinUtil.containsChinese(file.getName())){
-                String[] pinyins=PinyinUtil.get(file.getName());
-                pinyin=pinyins[0];
-                pinyin_first=pinyins[1];
-            }
-            statement.setString(6,pinyin);
-            statement.setString(7,pinyin_first);
+//            if(PinyinUtil.containsChinese(file.getName())){
+//                String[] pinyins=PinyinUtil.get(file.getName());
+//                pinyin=pinyins[0];
+//                pinyin_first=pinyins[1];
+//            }
+            statement.setString(6,meta.getPinyin());
+            statement.setString(7,meta.getPinyinFirst());
 
             System.out.println("执行文件保存操作"+sql);
             //3.执行sql
@@ -124,11 +141,29 @@ public class FileSave implements ScanCallback{
     }
 
     public static void main(String[] args) {
-        DBInit.init();
-        File file=new File("E:\\IDEA\\子文件夹");
-        FileSave fileSave=new FileSave();
-        fileSave.save(file);
-        fileSave.query(file.getParentFile());
+//        DBInit.init();
+//        File file=new File("E:\\IDEA\\子文件夹");
+//        FileSave fileSave=new FileSave();
+//        fileSave.save(file);
+//        fileSave.query(file.getParentFile());
+          List<FileMeta> locals=new ArrayList<>();
+          locals.add(new FileMeta("新建文件夹", "D:\\TMP\\MavenTest", true, 0, new Date()));
+          locals.add(new FileMeta("中华人民共和国", "D:\\TMP\\MavenTest",true,0, new Date()));
+          locals.add(new FileMeta("阿凡达.txt", "D:\\TMP\\MavenTest\\中华人民共和国", true, 0, new Date()));
+
+         List<FileMeta> metas=new ArrayList<>();
+         metas.add(new FileMeta("新建文件夹", "D:\\TMP\\MavenTest", true, 0, new Date()));
+         metas.add(new FileMeta("中华人民共和国", "D:\\TMP\\MavenTest",true,0, new Date()));
+         metas.add(new FileMeta("阿凡达.txt", "D:\\TMP\\MavenTest\\中华人民共和国", true, 0, new Date()));
+         Boolean contains=locals.contains(new FileMeta(new File("")));
+         //集合中是否包含某个元素 不一定代表传入这个对象在java内存中是同一个对象的引用
+        //满足（集合中的元素类型需要重写hashCode和equals 根据需要哪些属性来判断就来重写哪些）条件可以返回true
+         for(FileMeta meta:locals){
+            if(metas.contains(meta)){
+                System.out.println(meta);
+            }
+
+         }
     }
 }
 
