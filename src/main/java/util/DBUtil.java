@@ -36,7 +36,7 @@ public class DBUtil {
                     SQLiteConfig config=new SQLiteConfig();
                     config.setDateStringFormat(Util.DATA_PATTERN);
                     //初始化操作
-                    DATA_SOURCE=new SQLiteDataSource();//使用synchronized 保证指令不会重排序在创建对象的时候禁止指令重排序
+                    DATA_SOURCE=new SQLiteDataSource(config);//使用synchronized 保证指令不会重排序在创建对象的时候禁止指令重排序
                     ((SQLiteDataSource)DATA_SOURCE).setUrl(getUrl());
                 }
 

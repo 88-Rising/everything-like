@@ -38,10 +38,9 @@ public class FileSave implements ScanCallback{
 
         for(FileMeta meta : metas){
             if(!locals.contains(meta)){
-                //meta删除
-                // 1.删除meta信息本身
-                // 2.如果是meta目录 还要删除其子文件夹
+
                 //TODO delate
+                delete(meta);
 
             }
 
@@ -70,12 +69,13 @@ public class FileSave implements ScanCallback{
                   " from file_meta where path=?";
           //2.创建jdbc操作命令对象statement
           ps=connection.prepareStatement(sql);
-          String name = rs.getString("name");
+//          String name = rs.getString("name");
           ps.setString(1,dir.getPath());
           //3.执行sql语句
           rs=ps.executeQuery();
           //4.处理结果集ResultSet
           while(rs.next()){
+              String name = rs.getString("name");
               String path = rs.getString("path");
               Boolean isDirectory=rs.getBoolean("is_directory");
               Long size=rs.getLong("size");
@@ -129,6 +129,7 @@ public class FileSave implements ScanCallback{
             statement.setString(7,meta.getPinyinFirst());
 
             System.out.println("执行文件保存操作"+sql);
+            System.out.printf("insert name=%s,path=%s\n",meta.getName(),meta.getPath());
             //3.执行sql
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -163,6 +164,44 @@ public class FileSave implements ScanCallback{
                 System.out.println(meta);
             }
 
+         }
+    }
+    public void delete(FileMeta mate){
+        //meta删除
+        // 1.删除meta信息本身
+        // 2.如果是meta目录 还要删除其子文件夹
+
+         Connection connection=null;
+         PreparedStatement ps=null;
+         try{
+            connection=DBUtil.getConnection();
+            String sql = "delete from file_meta where" +
+                    " (name=? and path=? and is_directory=?)";  //删除文件自身
+//                    " or (path=?)";
+             if(mate.getDirectory()){
+                 sql += " or path=?" +  //匹配数据库文件夹子辈
+                        " or path like ?";//匹配孙后辈
+             }
+
+             ps = connection.prepareStatement(sql);
+             ps.setString(1,mate.getName());
+             ps.setString(2,mate.getPath());
+             ps.setBoolean(3,mate.getDirectory());
+            if(mate.getDirectory()){
+                ps.setString(4,
+                        mate.getPath()+File.separator+mate.getName());
+                ps.setString(5,
+                        mate.getPath()+File.separator+mate.getName()+File.separator);
+            }
+             System.out.printf("删除文件信息，dir=%s\n",
+                     mate.getName()+File.separator+mate.getName());
+            ps.executeUpdate();
+
+         }catch (Exception e){
+             e.printStackTrace();
+             throw new RuntimeException("删除文件信息出错，检查delate语句",e);
+         }finally {
+             DBUtil.close(connection,ps);
          }
     }
 }
