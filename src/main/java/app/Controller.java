@@ -13,13 +13,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
-import task.DBInit;
-import task.FileSave;
-import task.FileScanner;
-import task.ScanCallback;
+import task.*;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -101,8 +99,15 @@ public class Controller implements Initializable {
         if(dir!=null&&dir.trim().length()!=0){
             String content = searchField.getText();
             //提供数据库的查询方法
+            //TODO
+            //collection---->List/Set---->ArrayList,LinkedList/HashSet,TreeSet
+            //Map-->HashMap/HashTable/TreeMap
+            List<FileMeta> fileMetas=FileSearch.search(dir,content);
 
+            metas.addAll(fileMetas);
         }
+        //-->方法返回后 javafx表达那做什么？
+        //通过反射获取fileMeta类型中的属性（app.fxml文件中定义的属性）
     }
 
 
