@@ -89,6 +89,7 @@ public class Controller implements Initializable {
         task.start();
     }
 
+
     // 刷新表格数据
     private void freshTable(){
         ObservableList<FileMeta> metas = fileTable.getItems();
