@@ -41,8 +41,6 @@ public class DBInit {
         }
 
     }
-
-
     public static void init() {
         //数据库jdbc操作sql语句的执行
         //1.建立数据库连接Connection
